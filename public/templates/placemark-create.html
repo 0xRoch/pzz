@@ -1,0 +1,20 @@
+<div ng-controller="CreatorController">
+
+    <h3>Create new placemark</h3>
+
+    <p> <strong>Placemark id</strong> - "{{activePlacemark.id}}". </p>
+
+    <form ng-submit="saveNewPlacemark()">
+
+        <strong> Placemark name: </strong> <input type="text" required ng-model="activePlacemark.title"> </br>
+
+        <input type="submit" value="Save">
+
+        <button ng-click="deactivate()">
+            Cancel
+        </button>
+
+    </form>
+
+</div>
+

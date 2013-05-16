@@ -1,0 +1,17 @@
+<h3>Placemark details</h3>
+
+<p> <strong> Placemark name </strong>  - {{activePlacemark.title}}</p>
+
+<p> <strong>Placemark id</strong> - "{{activePlacemark.id}}". </p>
+
+<button ng-click="editActivePlacemark()" ng-show="userCanModify">
+    Edit
+</button>
+
+<button ng-click="prepareForPlacemarkCreation()" ng-show="userCanModify">
+    Add new
+</button>
+
+<button ng-click="deactivate()">
+    Close
+</button>

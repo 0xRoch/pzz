@@ -1,0 +1,25 @@
+<div ng-controller="EditorController">
+
+    <h3>Edit placemark {{activePlacemark.title}}</h3>
+
+
+    <p> <strong>Placemark id</strong> - "{{activePlacemark.id}}". </p>
+
+    <form ng-submit="updateActivePlacemark()">
+
+        <strong> Placemark name: </strong> <input type="text" required ng-model="activePlacemark.title"> </br>
+
+        <input type="submit" value="Save">
+
+        <button ng-click="deleteActivePlacemark()">
+            Delete
+        </button>
+
+        <button ng-click="deactivate()">
+            Cancel
+        </button>
+
+    </form>
+
+</div>
+

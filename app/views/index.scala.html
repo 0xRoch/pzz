@@ -1,0 +1,184 @@
+@(message: String)
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>@message</title>
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("javascripts/lib/bootstrap/css/bootstrap.min.css")">
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("javascripts/lib/bootstrap/css/bootstrap-responsive.min.css")">
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/map.css")">
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/placemark-details.css")">
+    <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+
+    <link rel="stylesheet" media="screen" href="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.css"/>
+    <link rel="stylesheet" media="screen" href="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.ie.css"/>
+    <script src="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.js"></script>
+
+    @helper.requireJs(core = routes.Assets.at("javascripts/require.js").url, module = routes.Assets.at("javascripts/app").url)
+</head>
+<body>
+<div class="container container-fluid" ng-controller="ApplicationController">
+    <div class="row">
+        <div class="span12">
+            <h1 class="text-center">Zeezoo</h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="navbar">
+            <div class="navbar-inner">
+                <ul class="nav">
+                    <li class="active"><a href="#">Инфобюро</a></li>
+                    <li><a href="#">Отдых</a></li>
+                    <li><a href="#">Еда</a></li>
+                    <li><a href="#">Спорт</a></li>
+                    <li><a href="#">Шопинг</a></li>
+                    <li><a href="#">Событие</a></li>
+                    <li><a href="#">Туризм</a></li>
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            Ещё
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">Отдых</a></li>
+                            <li><a href="#">Еда</a></li>
+                            <li><a href="#">Спорт</a></li>
+                            <li><a href="#">Шопинг</a></li>
+                            <li><a href="#">Событие</a></li>
+                            <li><a href="#">Туризм</a></li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <div class="pull-right" ng-controller="AuthController">
+                    <form class="navbar-form" ui-if="!isAuthenticated" ng-submit="signIn()">
+                        <input type="text" class="span2" placeholder="Имя пользователя" ng-model="credentials.username">
+                        <input type="password" class="span2" placeholder="Пароль" ng-model="credentials.password">
+                        <button type="submit" class="btn">Войти</button>
+                        <a class="btn" href="/signup">Регистрация</a>
+                    </form>
+                    <span ui-if="isAuthenticated" class="navbar-form">
+                        {{username}} <button ng-click="signOut()">Выход</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <ul class="thumbnails">
+            <li class="span4">
+                <a href="#" class="thumbnail">
+                    <img src="http://placehold.it/300x80" alt="">
+                </a>
+            </li>
+            <li class="span4">
+                <a href="#" class="thumbnail">
+                    <img src="http://placehold.it/300x80" alt="">
+                </a>
+            </li>
+            <li class="span4">
+                <a href="#" class="thumbnail">
+                    <img src="http://placehold.it/300x80" alt="">
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="row">
+        <div class="span2">
+            <h4>Фильтры</h4>
+            <label>
+                <input type="checkbox"> Обувь
+            </label>
+           @* <label>
+                <input type="checkbox"> Одежда
+            </label>
+            <label>
+                <input type="checkbox"> Подарки
+            </label>
+            <label>
+                <input type="checkbox"> Аксесуары
+            </label>
+            <label>
+                <input type="checkbox"> Ювелирные
+            </label>
+            <label>
+                <input type="checkbox"> Для красоты
+            </label>
+            <label>
+                <input type="checkbox"> Для души
+            </label>
+            <label>
+                <input type="checkbox"> Бутики
+            </label>
+            <label>
+                <input type="checkbox"> Электроника
+            </label>
+            <label>
+                <input type="checkbox"> Торговые центры
+            </label>
+            <label>
+                <input type="checkbox"> Дисконтные магазины
+            </label>
+            <label>
+                <input type="checkbox"> Секонд-хенды
+            </label>
+            <label>
+                <input type="checkbox"> Столовые
+            </label>*@
+
+        </div>
+
+        <div class="span8">
+            <sleepy-map class="b-map" init="initMap"></sleepy-map>
+        </div>
+
+        <div class="span2">
+            <h4>Условия</h4>
+            <label>
+                <input type="checkbox"> Скидки
+            </label>
+           @* <label>
+                <input type="checkbox"> Акции
+            </label>
+            <label>
+                <input type="checkbox"> Распродажи
+            </label>
+            <label>
+                <input type="checkbox"> Сетевые магазины
+            </label>*@
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="span10 offset1 well">
+            <button ng-click="prepareForPlacemarkCreation()" ng-show="userCanAddPlacemark()">Add placemark</button>
+
+            <div ng-controller="BusinessController">
+                <div>
+                    <h4>Your businesses</h4>
+
+                    <ul>
+                        <li ng-repeat="business in businesses">{{business.name}}</li>
+                    </ul>
+
+                    <form ng-submit="addBusiness()">
+                        <input type="text" required ng-model="freshBusiness.name"/>
+                        <input type="submit" value="Add"/>
+                    </form>
+                </div>
+            </div>
+
+            <div class="b-placemark-details" ng-controller="DetailsController" ng-show="detailedMode">
+
+                <div ng-include src="template"></div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+</body></html>
