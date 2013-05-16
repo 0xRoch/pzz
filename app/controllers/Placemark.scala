@@ -24,13 +24,14 @@ object Placemark extends Controller with ReactiveRest {
   def query(south: Option[Double], east: Option[Double], north: Option[Double], west: Option[Double]) = Action {
     Async {
       val q = Json.obj(
-        /*"point" -> Json.obj(
-          "$geoWithin" -> Json.obj( "$box" -> Json.arr(
-            Json.arr(north.get, west.get), Json.arr(east.get, south.get)
+        "point" -> Json.obj(
+          "$within" -> Json.obj( "$box" -> Json.arr(
+            Json.arr(west.get, south.get), Json.arr(east.get, north.get)
           ))
-        )*/
+        )
       )
-      super.queryItems(Json.obj())
+      println(q)
+      super.queryItems(q)
     }
   }
   

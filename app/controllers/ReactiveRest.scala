@@ -7,13 +7,20 @@ import play.api.libs.json._
 import play.api.Play.current
 import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.libs.json
+import play.api.libs.functional.syntax._
+import play.api.libs.json._
+import Reads.JsObjectReducer
+
 trait ReactiveRest extends Controller{
   val db = ReactiveMongoPlugin.db
 
   def collectionName : String
 
-  def itemReads : Reads[JsObject] =
-    (__ \ 'id).json.put(JsString("ok"))
+  val itemReads = (
+    (__ \ 'id).json.copyFrom( (__ \ '_id \ '$oid).json.pick[JsString] ) and
+      (__ \ '_id).json.prune and
+      (__ \ 'name).json.put(JsString("gremlin"))
+    ).reduce
 
   def collection: JSONCollection = db.collection[JSONCollection](collectionName)
 
