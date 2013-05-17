@@ -1,6 +1,6 @@
 define ["zeezoo", "auth/PermissionService"], ->
   angular.module('zeezoo').controller 'DetailsController', ($scope, PermissionService) ->
-    templateForMode =
+    templateForMode = {}
     templateForMode[$scope.modes.VIEWER] = 'templates/placemark-view.html'
     templateForMode[$scope.modes.EDITOR] = 'templates/placemark-edit.html'
     templateForMode[$scope.modes.CREATOR] = 'templates/placemark-create.html'

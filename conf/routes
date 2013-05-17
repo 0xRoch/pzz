@@ -9,16 +9,18 @@ GET     /                           controllers.Application.index
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
 # Json auth
-GET     /auth/status                controllers.Auth.status
-POST    /auth/in                    controllers.Auth.signIn
-POST    /auth/out                   controllers.Auth.signOut
+GET     /api/auth/status                controllers.AuthApi.status
+POST    /api/auth/in                    controllers.AuthApi.signIn
+POST    /api/auth/out                   controllers.AuthApi.signOut
 
 # Placemarks REST
-GET     /placemark/:id              controllers.Placemark.get(id)
-POST    /placemark/:id              controllers.Placemark.save(id)
-POST    /placemark                  controllers.Placemark.create
-GET     /placemark                  controllers.Placemark.query(south: Option[Double], east: Option[Double], north: Option[Double], west: Option[Double])
-DELETE  /placemark/:id              controllers.Placemark.delete(id)
+GET     /api/placemark/:id              controllers.PlacemarkApi.get(id)
+POST    /api/placemark/:id              controllers.PlacemarkApi.save(id)
+POST    /api/placemark                  controllers.PlacemarkApi.create
+GET     /api/placemark                  controllers.PlacemarkApi.query(q: Option[String])
+DELETE  /api/placemark/:id              controllers.PlacemarkApi.delete(id)
+
+GET     /api/placemark/:id/canModify    controllers.PlacemarkApi.canModify(id)
 
 # Login page
 GET     /login                      securesocial.controllers.LoginPage.login

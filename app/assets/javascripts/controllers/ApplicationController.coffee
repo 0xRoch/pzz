@@ -30,7 +30,7 @@ define [
       $scope.initializeListeners()
 
     $scope.modes =
-      VIEWER: 'vewer mode'
+      VIEWER: 'viewer mode'
       EDITOR: 'editor mode'
       CREATOR: 'creator mode'
 
@@ -49,13 +49,15 @@ define [
       southEast = border.getSouthEast()
       northWest = border.getNorthWest()
 
-      boundaries =
-        south: southEast.lat
-        north: northWest.lat
-        west: northWest.lng
-        east: southEast.lng
+      q =
+        coordinates:
+          '$within':
+            '$box': [[southEast.lng, northWest.lat], [northWest.lng, southEast.lat]]
 
-      placemarks = Placemark.query boundaries, ->
+      console.log q
+      console.log angular.toJson({q:{coordinates:{"a":"b"}}})
+
+      placemarks = Placemark.query {q: angular.toJson(q)}, ->
         $scope.displayedPlacemarks = placemarks
 
     $scope.activateDetailedMode = (placemark) ->

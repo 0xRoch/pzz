@@ -11,15 +11,15 @@ define ["zeezoo"], ->
       callback data if callback
 
     @checkAuth = (onSuccessCallback) ->
-      $http.get('/auth/status').success (data) =>
+      $http.get('/api/auth/status').success (data) =>
         updateStatus data, onSuccessCallback
 
     @signIn = (credentials, onSuccessCallback) ->
-      $http.post('/auth/in', credentials).success (data) =>
+      $http.post('/api/auth/in', credentials).success (data) =>
         updateStatus data, onSuccessCallback
 
     @signOut = (onSuccessCallback)->
-      $http.post('/auth/out').success (data) =>
+      $http.post('/api/auth/out').success (data) =>
         updateStatus data, onSuccessCallback
 
     @

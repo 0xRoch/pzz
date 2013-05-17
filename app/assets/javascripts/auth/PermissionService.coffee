@@ -4,5 +4,5 @@ define ["zeezoo", "auth/AuthService"], ->
       authService.isAuthenticated
 
     @userCanModify = (placemark, callback) ->
-      $http.get("/placemarks/canModify/#{placemark?.id}").success (data) =>
+      $http.get("/api/placemark/#{placemark?.id}/canModify").success (data) =>
         callback data

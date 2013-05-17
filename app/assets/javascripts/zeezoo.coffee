@@ -5,9 +5,11 @@ require [
   m = angular.module 'zeezoo', ['infra-map', 'ngResource', 'ui.bootstrap', 'ui']
 
   m.factory 'Placemark', ($resource) ->
-    urlTemplate = '/placemark/:PlacemarkId'
+    urlTemplate = '/api/placemark/:PlacemarkId'
 
-    Placemark = $resource urlTemplate, {PlacemarkId: '@id'}
+    Placemark = $resource urlTemplate, {PlacemarkId: '@id'}, {
+      find: {method: "POST", isArray: true}
+    }
 
     Placemark::equalsTo = (placemark) ->
       @id == placemark.id
@@ -15,7 +17,7 @@ require [
     Placemark
 
   m.factory 'Business', ($resource) ->
-    urlTemplate = '/business/:BusinessId'
+    urlTemplate = '/api/business/:BusinessId'
 
     $resource urlTemplate, {BusinessId: '@id'}
 
