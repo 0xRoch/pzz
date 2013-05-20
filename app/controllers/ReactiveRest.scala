@@ -122,7 +122,6 @@ trait ReactiveRest extends Controller {
    * @return
    */
   def query(q: Option[String]) = Action { implicit request =>
-      println(q)
       if (q.isEmpty) {
         Async {
           queryItems(defaultQueryFinder)

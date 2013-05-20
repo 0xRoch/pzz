@@ -19,15 +19,18 @@ object PlacemarkApi extends Controller with ReactiveRest with securesocial.core.
   placemark: {
      title: "string",
      coordinates: {lng: lng, lat: lat},
-     flags: ["flag1", "flag2", "flagN"]
+     filters: ["flag1", "flag2", "flagN"],
+     props: ["flag1", "flag2", "flagN"]
   }
 
    */
 
   override def collection : JSONCollection = super.collection
 
-  collection.drop()
+  //collection.drop()
   collection.indexesManager.ensure(Index(Seq("coordinates"->IndexType.Geo2D)))
+  collection.indexesManager.ensure(Index(Seq("filters" -> IndexType.Descending)))
+  collection.indexesManager.ensure(Index(Seq("props" -> IndexType.Descending)))
 
   collection.insert(Json.obj("title" -> "Placemark g1", "coordinates" -> Json.obj("lng"->JsNumber(30.305), "lat"->JsNumber(59.953))))
   collection.insert(Json.obj("title" -> "Placemark g2", "coordinates" -> Json.obj("lng"->JsNumber(30.405), "lat"->JsNumber(59.943))))

@@ -111,7 +111,7 @@ define [
 
     createPlacemark = (location) ->
       if $scope.mode == $scope.modes.CREATOR
-        placemark = new Placemark {coordinates: {lat: location.lat, lng: location.lng}}
+        placemark = new Placemark {coordinates: {lng: location.lng, lat: location.lat}}
         $scope.mapContainer.emit TemporaryPlacemarkBehaviour.TEMPORARY_PLACEMARK_CREATED, location
         $scope.activateDetailedMode placemark
 
