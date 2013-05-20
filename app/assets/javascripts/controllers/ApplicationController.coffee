@@ -16,10 +16,19 @@ define [
   "auth/PermissionService",
   "behaviours/PlacemarkBehaviour",
   "behaviours/TemporaryPlacemarkBehaviour",
-  "map/behaviours"
+  "map/behaviours",
+  "MapService"
 ], ->
-  angular.module('zeezoo').controller 'ApplicationController', ($scope, Placemark, PermissionService, PlacemarkBehaviour, TemporaryPlacemarkBehaviour, BasicBehaviour) ->
+  angular.module('zeezoo').controller 'ApplicationController', ($scope, $http, Placemark, PermissionService, PlacemarkBehaviour, TemporaryPlacemarkBehaviour, BasicBehaviour, mapService) ->
     $scope.displayedPlacemarks = []
+
+    $scope.$on mapService.UPDATE_PLACEMARKS, (e, placemarks)->
+      # remove
+      rm = (p for p in $scope.displayedPlacemarks when not (np for np in placemarks when np.id is p.id)?.length)
+      $scope.removePlacemark(rp) for rp in rm if rm?.length
+      # add new
+      $scope.addPlacemark(p) for p in placemarks when not (pp for pp in $scope.displayedPlacemarks when pp.id is p.id)?.length
+
     $scope.detailedMode = false
 
     $scope.initMap = (mapContainer) ->
@@ -46,19 +55,29 @@ define [
         $scope.mapContainer.detach TemporaryPlacemarkBehaviour
 
     updateBorder = (border)->
-      southEast = border.getSouthEast()
-      northWest = border.getNorthWest()
+      mapService.borderChanged(border)
 
-      q =
-        coordinates:
-          '$within':
-            '$box': [[southEast.lng, northWest.lat], [northWest.lng, southEast.lat]]
+    #
+    # VERTICALS
+    #
+    $scope.currentVertical = null
+    $scope.vertical = {}
+    $scope.f = {filters: {}, props: {}}
 
-      console.log q
-      console.log angular.toJson({q:{coordinates:{"a":"b"}}})
+    $scope.selectVertical = (v) ->
+      $scope.currentVertical = v
+      mapService.loadVertical v.code, (vert)->
+        $scope.vertical = vert
 
-      placemarks = Placemark.query {q: angular.toJson(q)}, ->
-        $scope.displayedPlacemarks = placemarks
+    $scope.filterChanged = ->
+      mapService.filterChanged($scope.f)
+
+    #
+    # / END VERTICALS
+    #
+
+    $scope.updatePlacemarks = (placemarks)->
+      $scope.$emit "updatePlacemarks", placemarks
 
     $scope.activateDetailedMode = (placemark) ->
       $scope.detailedMode = true
@@ -92,7 +111,7 @@ define [
 
     createPlacemark = (location) ->
       if $scope.mode == $scope.modes.CREATOR
-        placemark = new Placemark {lat: location.lat, lon: location.lng}
+        placemark = new Placemark {coordinates: {lat: location.lat, lng: location.lng}}
         $scope.mapContainer.emit TemporaryPlacemarkBehaviour.TEMPORARY_PLACEMARK_CREATED, location
         $scope.activateDetailedMode placemark
 

@@ -5,9 +5,9 @@ require [
   m = angular.module 'zeezoo', ['infra-map', 'ngResource', 'ui.bootstrap', 'ui']
 
   m.factory 'Placemark', ($resource) ->
-    urlTemplate = '/api/placemark/:PlacemarkId'
+    urlTemplate = '/api/placemark/:id'
 
-    Placemark = $resource urlTemplate, {PlacemarkId: '@id'}, {
+    Placemark = $resource urlTemplate, {id: '@id'}, {
       find: {method: "POST", isArray: true}
     }
 
@@ -28,18 +28,25 @@ require [
         $scope.replacePlacemark $scope.activePlacemark
         $scope.changeMode $scope.modes.VIEWER
 
-  m.controller 'CreatorController', ($scope) ->
-    $scope.saveNewPlacemark = ->
-      $scope.activePlacemark.$save ->
-        $scope.addPlacemark $scope.activePlacemark
-        $scope.changeMode $scope.modes.VIEWER
+  m.controller 'MenuController', ($scope, $http) ->
+    $scope.menu = []
+    $http.get("/api/vertical").success (list)->
+      $scope.menu = list
+
+    $scope.activeClass = (v) -> if v is $scope.currentVertical then "active" else ""
 
   require [
     "controllers/ApplicationController",
     "controllers/BusinessController",
     "controllers/DetailsController",
-    "auth/AuthController"
+    "auth/AuthController",
+    "MapService"
   ], ->
-    console.log "launching..."
+
+    m.controller 'CreatorController', ($scope, Placemark, mapService) ->
+      $scope.saveNewPlacemark = ->
+        mapService.pushPlacemark $scope.activePlacemark, (p)->
+            $scope.addPlacemark p
+            $scope.changeMode $scope.modes.VIEWER
+
     angular.bootstrap(document, ['zeezoo']);
-    console.log "angular.bootstrap"

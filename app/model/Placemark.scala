@@ -8,3 +8,5 @@ case class Placemark(id: String, lat: Double, lng: Double, title: String) {
 
 }
 
+
+case class Coordinates(lng: Double, lat: Double)

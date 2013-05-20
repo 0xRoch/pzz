@@ -22,6 +22,10 @@ DELETE  /api/placemark/:id              controllers.PlacemarkApi.delete(id)
 
 GET     /api/placemark/:id/canModify    controllers.PlacemarkApi.canModify(id)
 
+# Verticals REST
+GET /api/vertical/:code   controllers.VerticalApi.getByCode(code)
+GET /api/vertical           controllers.VerticalApi.listCodes
+
 # Login page
 GET     /login                      securesocial.controllers.LoginPage.login
 GET     /logout                     securesocial.controllers.LoginPage.logout

@@ -19,7 +19,9 @@ define ["zeezoo"], ->
         icon: @:: _defaultMarkerIcon
 
       constructor: (@placemark, @_layer) ->
-        location = [@placemark.point[1], @placemark.point[0]]
+
+        location = @placemark.coordinates
+
         super(location, @_layer)
         @_marker.bindPopup @placemark.title, {offset: new L.Point 0, -30}
         @isActive = false

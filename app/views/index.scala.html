@@ -28,28 +28,8 @@
     <div class="row">
         <div class="navbar">
             <div class="navbar-inner">
-                <ul class="nav">
-                    <li class="active"><a href="#">Инфобюро</a></li>
-                    <li><a href="#">Отдых</a></li>
-                    <li><a href="#">Еда</a></li>
-                    <li><a href="#">Спорт</a></li>
-                    <li><a href="#">Шопинг</a></li>
-                    <li><a href="#">Событие</a></li>
-                    <li><a href="#">Туризм</a></li>
-                    <li class="dropdown">
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                            Ещё
-                            <span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a href="#">Отдых</a></li>
-                            <li><a href="#">Еда</a></li>
-                            <li><a href="#">Спорт</a></li>
-                            <li><a href="#">Шопинг</a></li>
-                            <li><a href="#">Событие</a></li>
-                            <li><a href="#">Туризм</a></li>
-                        </ul>
-                    </li>
+                <ul class="nav" ng-controller="MenuController">
+                    <li ng-repeat="v in menu" ng-class="activeClass(v)" ng-cloak><a ng-click="selectVertical(v)" href="#">{{v.title}}</a></li>
                 </ul>
 
                 <div class="pull-right" ng-controller="AuthController">
@@ -67,7 +47,7 @@
         </div>
     </div>
 
-    <div class="row">
+    <!--div class="row">
         <ul class="thumbnails">
             <li class="span4">
                 <a href="#" class="thumbnail">
@@ -85,50 +65,18 @@
                 </a>
             </li>
         </ul>
-    </div>
+    </div-->
 
     <div class="row">
         <div class="span2">
-            <h4>Фильтры</h4>
-            <label>
-                <input type="checkbox"> Обувь
-            </label>
-           @* <label>
-                <input type="checkbox"> Одежда
-            </label>
-            <label>
-                <input type="checkbox"> Подарки
-            </label>
-            <label>
-                <input type="checkbox"> Аксесуары
-            </label>
-            <label>
-                <input type="checkbox"> Ювелирные
-            </label>
-            <label>
-                <input type="checkbox"> Для красоты
-            </label>
-            <label>
-                <input type="checkbox"> Для души
-            </label>
-            <label>
-                <input type="checkbox"> Бутики
-            </label>
-            <label>
-                <input type="checkbox"> Электроника
-            </label>
-            <label>
-                <input type="checkbox"> Торговые центры
-            </label>
-            <label>
-                <input type="checkbox"> Дисконтные магазины
-            </label>
-            <label>
-                <input type="checkbox"> Секонд-хенды
-            </label>
-            <label>
-                <input type="checkbox"> Столовые
-            </label>*@
+            <div ng-repeat="block in vertical.filters.blocks">
+                <h6 ui-if="block.title">{{block.title}}</h6>
+                <label ng-repeat="flag in block.flags">
+                    <input type="checkbox" ng-model="f.filters[flag.code]" ng-change="filterChanged()"/>
+                    {{flag.title}}
+                </label>
+                <br/>
+            </div>
 
         </div>
 
@@ -137,19 +85,15 @@
         </div>
 
         <div class="span2">
-            <h4>Условия</h4>
-            <label>
-                <input type="checkbox"> Скидки
-            </label>
-           @* <label>
-                <input type="checkbox"> Акции
-            </label>
-            <label>
-                <input type="checkbox"> Распродажи
-            </label>
-            <label>
-                <input type="checkbox"> Сетевые магазины
-            </label>*@
+            <h4>Условия:</h4>
+            <div ng-repeat="block in vertical.props.blocks">
+                <h6 ui-if="block.title">{{block.title}}</h6>
+                <label ng-repeat="flag in block.flags">
+                    <input type="checkbox" ng-model="f.props[flag.code]" ng-change="filterChanged()"/>
+                    {{flag.title}}
+                </label>
+                <br/>
+            </div>
         </div>
     </div>
 

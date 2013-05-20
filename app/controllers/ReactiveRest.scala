@@ -8,6 +8,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.libs.json.Reads._
+import reactivemongo.bson.BSONObjectID
 
 trait ReactiveRest extends Controller {
   val db = ReactiveMongoPlugin.db
@@ -24,6 +25,12 @@ trait ReactiveRest extends Controller {
     s => Json.obj("_id" -> Json.obj("$oid" -> s))
   }
   val fromObjectId = (__ \ '_id).json.copyFrom((__ \ '_id \ '$oid).json.pick[JsString])
+
+  /** Generates a new ID and adds it to your JSON using Json extended notation for BSON */
+  val generateId = (__ \ '_id \ '$oid).json.put( JsString(BSONObjectID.generate.stringify) )
+
+  /** Updates Json by adding both ID and date */
+  val addMongoId: Reads[JsObject] = __.json.update( generateId )
 
   // Collection to query
   def collectionName: String
@@ -48,6 +55,12 @@ trait ReactiveRest extends Controller {
   // vadidator/reader for query
   def queryFinderReads: Reads[JsObject] = __.json.pickBranch
 
+  /**
+   * REST GET action
+   *
+   * @param id
+   * @return
+   */
   def get(id: String) = Action {
     Async {
       collection.find(toObjectId.writes(id)).one[JsValue].map {
@@ -64,6 +77,12 @@ trait ReactiveRest extends Controller {
     }
   }
 
+  /**
+   * REST POST action for a concrete id
+   *
+   * @param id
+   * @return
+   */
   def save(id: String) = Action(parse.json) {
     request =>
       Async {
@@ -71,15 +90,39 @@ trait ReactiveRest extends Controller {
       }
   }
 
-  def create() = Action(parse.json) {
-    request =>
+  /**
+   * REST POST action without id
+   *
+   * @return
+   */
+  def create() = Action(parse.json) {request =>
+    println(request.body)
+    request.body.transform(addMongoId).map {jsobj =>
       Async {
-        collection.insert(request.body).map(err => Ok(err.stringify))
+        println(jsobj)
+        collection.insert(jsobj).map { r =>
+          jsobj.transform(itemReads).map {
+            j => Ok(j)
+          } .recoverTotal {
+            e => BadRequest(JsError.toFlatJson(e))
+          }
+
+        }
       }
+    }.recoverTotal {err =>
+      BadRequest(JsError.toFlatJson(err))
+    }
+
   }
 
-  def query(q: Option[String]) = Action {
-    implicit request =>
+  /**
+   * REST GET action without id
+   *
+   * @param q
+   * @return
+   */
+  def query(q: Option[String]) = Action { implicit request =>
+      println(q)
       if (q.isEmpty) {
         Async {
           queryItems(defaultQueryFinder)
@@ -97,6 +140,12 @@ trait ReactiveRest extends Controller {
       }
   }
 
+  /**
+   * REST DELETE action for id
+   *
+   * @param id
+   * @return
+   */
   def delete(id: String) = Action {
     Async {
       collection.remove[JsValue](toObjectId.writes(id)).map {
