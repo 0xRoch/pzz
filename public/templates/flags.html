@@ -1,0 +1,21 @@
+<h6 ui-if="block.title">{{block.title}}</h6>
+<label ng-repeat="flag in block.flags">
+    <input type="checkbox" ng-model="f[block.type][flag.code]" ng-change="filterChanged()"/>
+    {{flag.title}}
+</label>
+
+<div class="dropdown" ui-if="block.more">
+    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+        {{ block.moreTitle || "Другое" }}
+        <span class="caret"></span>
+    </a>
+    <!-- Link or button to toggle dropdown -->
+    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+        <li ng-repeat="flag in block.more"><label>
+            <input type="checkbox" ng-model="f[block.type][flag.code]" ng-change="filterChanged()"/>
+            {{flag.title}}
+        </label></li>
+    </ul>
+</div>
+
+<br/>

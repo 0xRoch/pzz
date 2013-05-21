@@ -29,7 +29,7 @@
         <div class="navbar">
             <div class="navbar-inner">
                 <ul class="nav" ng-controller="MenuController">
-                    <li ng-repeat="v in menu" ng-class="activeClass(v)" ng-cloak><a ng-click="selectVertical(v)" href="#">{{v.title}}</a></li>
+                    <li ng-repeat="v in menu" ng-class="activeClass(v)" ng-cloak><a ng-click="selectVertical(v)">{{v.title}}</a></li>
                 </ul>
 
                 <div class="pull-right" ng-controller="AuthController">
@@ -69,14 +69,7 @@
 
     <div class="row">
         <div class="span2">
-            <div ng-repeat="block in vertical.filters.blocks">
-                <h6 ui-if="block.title">{{block.title}}</h6>
-                <label ng-repeat="flag in block.flags">
-                    <input type="checkbox" ng-model="f.filters[flag.code]" ng-change="filterChanged()"/>
-                    {{flag.title}}
-                </label>
-                <br/>
-            </div>
+            <div ng-repeat="block in vertical.filters.blocks" ng-init="block.type='filters'" ng-include src="'/assets/templates/flags.html'"></div>
 
         </div>
 
@@ -86,14 +79,8 @@
 
         <div class="span2">
             <h4>Условия:</h4>
-            <div ng-repeat="block in vertical.props.blocks">
-                <h6 ui-if="block.title">{{block.title}}</h6>
-                <label ng-repeat="flag in block.flags">
-                    <input type="checkbox" ng-model="f.props[flag.code]" ng-change="filterChanged()"/>
-                    {{flag.title}}
-                </label>
-                <br/>
-            </div>
+
+            <div ng-repeat="block in vertical.props.blocks" ng-init="block.type='props'" ng-include src="'/assets/templates/flags.html'"></div>
         </div>
     </div>
 
@@ -101,7 +88,7 @@
         <div class="span10 offset1 well">
             <button ng-click="prepareForPlacemarkCreation()" ng-show="userCanAddPlacemark()">Add placemark</button>
 
-            <div ng-controller="BusinessController">
+            <!--div ng-controller="BusinessController">
                 <div>
                     <h4>Your businesses</h4>
 
@@ -114,7 +101,7 @@
                         <input type="submit" value="Add"/>
                     </form>
                 </div>
-            </div>
+            </div-->
 
             <div class="b-placemark-details" ng-controller="DetailsController" ng-show="detailedMode">
 

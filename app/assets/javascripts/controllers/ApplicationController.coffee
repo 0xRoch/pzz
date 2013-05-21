@@ -17,12 +17,12 @@ define [
   "behaviours/PlacemarkBehaviour",
   "behaviours/TemporaryPlacemarkBehaviour",
   "map/behaviours",
-  "MapService"
+  "placemarks"
 ], ->
-  angular.module('zeezoo').controller 'ApplicationController', ($scope, $http, Placemark, PermissionService, PlacemarkBehaviour, TemporaryPlacemarkBehaviour, BasicBehaviour, mapService) ->
+  angular.module('zeezoo').controller 'ApplicationController', ($scope, $http, PermissionService, PlacemarkBehaviour, TemporaryPlacemarkBehaviour, BasicBehaviour, placemarksService) ->
     $scope.displayedPlacemarks = []
 
-    $scope.$on mapService.UPDATE_PLACEMARKS, (e, placemarks)->
+    $scope.$on placemarksService.UPDATE_PLACEMARKS, (e, placemarks)->
       # remove
       rm = (p for p in $scope.displayedPlacemarks when not (np for np in placemarks when np.id is p.id)?.length)
       $scope.removePlacemark(rp) for rp in rm if rm?.length
@@ -55,7 +55,7 @@ define [
         $scope.mapContainer.detach TemporaryPlacemarkBehaviour
 
     updateBorder = (border)->
-      mapService.borderChanged(border)
+      placemarksService.borderChanged(border)
 
     #
     # VERTICALS
@@ -66,11 +66,11 @@ define [
 
     $scope.selectVertical = (v) ->
       $scope.currentVertical = v
-      mapService.loadVertical v.code, (vert)->
+      placemarksService.loadVertical v.code, (vert)->
         $scope.vertical = vert
 
     $scope.filterChanged = ->
-      mapService.filterChanged($scope.f)
+      placemarksService.filterChanged($scope.f)
 
     #
     # / END VERTICALS
@@ -111,7 +111,7 @@ define [
 
     createPlacemark = (location) ->
       if $scope.mode == $scope.modes.CREATOR
-        placemark = new Placemark {coordinates: {lng: location.lng, lat: location.lat}}
+        placemark = placemarksService.createPlacemark {coordinates: {lng: location.lng, lat: location.lat}}
         $scope.mapContainer.emit TemporaryPlacemarkBehaviour.TEMPORARY_PLACEMARK_CREATED, location
         $scope.activateDetailedMode placemark
 
@@ -120,5 +120,3 @@ define [
       $scope.mapContainer.on BasicBehaviour.MAP_CLICKED, createListener createPlacemark
       $scope.mapContainer.on PlacemarkBehaviour.PLACEMARK_ACTIVATED, createListener $scope.activateDetailedMode
       $scope.mapContainer.on PlacemarkBehaviour.PLACEMARK_DEACTIVATED, createListener $scope.deactivateDetailedMode
-
-  console.log "app controller loaded"

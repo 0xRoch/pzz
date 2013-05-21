@@ -4,17 +4,7 @@ require [
 ], ->
   m = angular.module 'zeezoo', ['infra-map', 'ngResource', 'ui.bootstrap', 'ui']
 
-  m.factory 'Placemark', ($resource) ->
-    urlTemplate = '/api/placemark/:id'
 
-    Placemark = $resource urlTemplate, {id: '@id'}, {
-      find: {method: "POST", isArray: true}
-    }
-
-    Placemark::equalsTo = (placemark) ->
-      @id == placemark.id
-
-    Placemark
 
   m.factory 'Business', ($resource) ->
     urlTemplate = '/api/business/:BusinessId'
@@ -40,12 +30,12 @@ require [
     "controllers/BusinessController",
     "controllers/DetailsController",
     "auth/AuthController",
-    "MapService"
+    "placemarks"
   ], ->
 
-    m.controller 'CreatorController', ($scope, Placemark, mapService) ->
+    m.controller 'CreatorController', ($scope, placemarksService) ->
       $scope.saveNewPlacemark = ->
-        mapService.pushPlacemark $scope.activePlacemark, (p)->
+        placemarksService.pushPlacemark $scope.activePlacemark, (p)->
             $scope.addPlacemark p
             $scope.changeMode $scope.modes.VIEWER
 
